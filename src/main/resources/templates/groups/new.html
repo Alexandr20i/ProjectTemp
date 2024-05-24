@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Создать группу</title>
+
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/menubar.css}" rel="stylesheet">
+
+</head>
+<body>
+
+<nav>
+  <ul>
+    <li><a th:href="@{/}">Temp</a></li>
+    <li><a th:href="@{/}">Новости</a></li>
+    <li><a th:href="@{/}">События</a></li>
+    <li><a th:href="@{/searchuser}">Атлеты</a></li>
+    <li><a th:href="@{/groups}">Группы</a></li>
+
+    <!-- Показываем ссылку на профиль и выход, если пользователь в системе -->
+    <li th:if="${username}">
+      <a th:href="@{/dashboard}" th:text="'Profile (' + ${username} + ')'">Profile</a>
+    </li>
+    <li th:if="${username}"><a th:href="@{/logout}">Выйти</a></li>
+
+    <!-- Показываем Вход и Регистрацию, если пользователь не в системе -->
+    <li th:unless="${username}"><a th:href="@{/login}">Вход</a></li>
+
+<!--    <li><button onclick="toggleDarkMode()">Dark Mode</button></li>-->
+  </ul>
+</nav>
+
+
+<h1>Создать новую группу</h1>
+<div>
+  <form th:action="@{/groups}" method="post">
+    <label for="name">Название группы:</label>
+    <input type="text" id="name" name="name" required />
+    <button type="submit">Сохранить</button>
+  </form>
+</div>
+</body>
+</html>

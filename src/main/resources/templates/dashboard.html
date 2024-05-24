@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Личный кабинет</title>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/menubar.css}" rel="stylesheet">
+
+</head>
+<body>
+<header>
+
+    <nav>
+      <ul>
+        <li><a th:href="@{/}">Temp</a></li>
+        <li><a th:href="@{/}">Новости</a></li>
+        <li><a th:href="@{/}">События</a></li>
+        <li><a th:href="@{/searchuser}">Атлеты</a></li>
+        <li><a th:href="@{/groups}">Группы</a></li>
+
+        <!-- Показываем ссылку на профиль и выход, если пользователь в системе -->
+        <li th:if="${username}">
+          <a th:href="@{/dashboard}" th:text="'Profile (' + ${username} + ')'">Profile</a>
+        </li>
+        <li th:if="${username}"><a th:href="@{/logout}">Выйти</a></li>
+
+        <!-- Показываем Вход и Регистрацию, если пользователь не в системе -->
+        <li th:unless="${username}"><a th:href="@{/login}">Вход</a></li>
+
+<!--        <li><button onclick="toggleDarkMode()">Dark Mode</button></li>-->
+      </ul>
+    </nav>
+
+</header>
+<h1>Личный кабинет</h1>
+<div>
+  <h3>Информация о пользователе</h3>
+  <p><strong>Имя:</strong> <span th:text="${user.name}"></span></p>
+  <p><strong>Фамилия:</strong> <span th:text="${user.fnameUser}"></span></p>
+  <p><strong>Дата рождения:</strong> <span th:text="${user.bday}"></span></p>
+  <p><strong>Пол:</strong> <span th:text="${user.gender}"></span></p>
+  <p><strong>Страна:</strong> <span th:text="${user.country}"></span></p>
+  <p><strong>Город:</strong> <span th:text="${user.city}"></span></p>
+  <p><strong>Рост:</strong> <span th:text="${user.height}">0</span> см</p>
+  <p><strong>Вес:</strong> <span th:text="${user.weight}">0</span> кг</p>
+  <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+  <p><strong>Имя пользователя:</strong> <span th:text="${user.username}"></span></p>
+</div>
+<div>
+  <a href="/logout">Выход</a>
+</div>
+<script src="/js/darkmode.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Вход</title>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/menubar.css}" rel="stylesheet">
+
+</head>
+<body>
+<header>
+  <nav>
+    <ul>
+      <li><a th:href="@{/}">Temp</a></li>
+      <li><a th:href="@{/}">Новости</a></li>
+      <li><a th:href="@{/}">События</a></li>
+      <li><a th:href="@{/searchuser}">Атлеты</a></li>
+      <li><a th:href="@{/groups}">Группы</a></li>
+
+      <!-- Показываем ссылку на профиль и выход, если пользователь в системе -->
+      <li th:if="${username}">
+        <a th:href="@{/dashboard}" th:text="'Profile (' + ${username} + ')'">Profile</a>
+      </li>
+      <li th:if="${username}"><a th:href="@{/logout}">Выйти</a></li>
+
+      <!-- Показываем Вход и Регистрацию, если пользователь не в системе -->
+      <li th:unless="${username}"><a th:href="@{/login}">Вход</a></li>
+
+<!--      <li><button onclick="toggleDarkMode()">Dark Mode</button></li>-->
+    </ul>
+  </nav>
+</header>
+<h1>Вход</h1>
+<div th:if="${error}">
+  <p th:text="${error}">Ошибка</p>
+</div>
+<form action="/login" method="post">
+  <label for="username">Имя пользователя:</label>
+  <input type="text" id="username" name="username" required><br><br>
+
+  <label for="password">Пароль:</label>
+  <input type="password" id="password" name="password" required><br><br>
+
+  <button type="submit">Войти</button>
+</form>
+<div>
+  <p>Еще не зарегистрированы? <a href="/register">Зарегистрироваться</a></p>
+</div>
+<script src="/js/darkmode.js"></script>
+
+</body>
+</html>

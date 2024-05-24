@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Search User</title>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/menubar.css}" rel="stylesheet">
+
+</head>
+<body>
+<header>
+  <nav>
+    <ul>
+      <li><a th:href="@{/}">Temp</a></li>
+      <li><a th:href="@{/}">Новости</a></li>
+      <li><a th:href="@{/}">События</a></li>
+      <li><a th:href="@{/searchuser}">Атлеты</a></li>
+      <li><a th:href="@{/groups}">Группы</a></li>
+
+      <!-- Показываем ссылку на профиль и выход, если пользователь в системе -->
+      <li th:if="${username}">
+        <a th:href="@{/dashboard}" th:text="'Profile (' + ${username} + ')'">Profile</a>
+      </li>
+      <li th:if="${username}"><a th:href="@{/logout}">Выйти</a></li>
+
+      <!-- Показываем Вход и Регистрацию, если пользователь не в системе -->
+      <li th:unless="${username}"><a th:href="@{/login}">Вход</a></li>
+
+<!--      <li><button onclick="toggleDarkMode()">Dark Mode</button></li>-->
+    </ul>
+  </nav>
+</header>
+
+<div class="search-container">
+  <h2>Search for a User</h2>
+  <form action="#" th:action="@{/showusers}" method="get">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <button type="submit">Search</button>
+  </form>
+</div>
+<script src="/js/darkmode.js"></script>
+
+</body>
+</html>
