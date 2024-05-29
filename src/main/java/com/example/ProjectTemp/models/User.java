@@ -1,10 +1,18 @@
 package com.example.ProjectTemp.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+
 
 @Entity
+@Getter
+@Setter
 @Table(name = "users")
 public class User {
     @Id
@@ -46,99 +54,17 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    public Long getId() {
-        return this.id;
-    }
+    @Column(name = "active")
+    private boolean active = false;
 
-    public String getName() {
-        return this.name;
-    }
+    @ManyToMany
+    @JoinTable(
+            name = "users_followers",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "follower_id")
+    )
+    private Set<User> followers = new HashSet<>();
 
-    public String getFnameUser() {
-        return this.fnameUser;
-    }
-
-    public Date getBday() {
-        return this.bday;
-    }
-
-    public String getGender() {
-        return this.gender;
-    }
-
-    public String getCountry() {
-        return this.country;
-    }
-
-    public String getCity() {
-        return this.city;
-    }
-
-    public Double getHeight() {
-        return this.height;
-    }
-
-    public Double getWeight() {
-        return this.weight;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setFnameUser(String fnameUser) {
-        this.fnameUser = fnameUser;
-    }
-
-    public void setBday(Date bday) {
-        this.bday = bday;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public void setHeight(Double height) {
-        this.height = height;
-    }
-
-    public void setWeight(Double weight) {
-        this.weight = weight;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    @ManyToMany
+    private Set<User> following = new HashSet<>();
 }

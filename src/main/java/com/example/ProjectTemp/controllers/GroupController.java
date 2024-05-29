@@ -3,6 +3,7 @@ package com.example.ProjectTemp.controllers;
 import com.example.ProjectTemp.models.Group;
 import com.example.ProjectTemp.models.User;
 import com.example.ProjectTemp.services.GroupService;
+import com.example.ProjectTemp.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,32 @@ public class GroupController {
 
     @Autowired
     private GroupService groupService;
+
+    @Autowired
+    private PostService postService;
+
+    @PostMapping("/{id}/posts")
+    public String createGroupPost(@PathVariable Long id, @RequestParam String content, HttpSession session, Model model) {
+        Group group = groupService.getGroupById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Неверный ID группы: " + id));
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        // Проверяем, является ли пользователь владельцем группы
+        if (!group.getOwner().getId().equals(user.getId())) {
+            model.addAttribute("error", "Только создатель группы может публиковать посты.");
+            return "groups/details";
+        }
+
+        postService.createPostForGroup(content, group);
+        return "redirect:/groups/" + id;
+    }
+
+
+
 
     @GetMapping
     public String listGroups(@RequestParam(required = false) String search,
