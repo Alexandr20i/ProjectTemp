@@ -1,11 +1,86 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <title>Профиль пользователя</title>-->
+<!--  <link th:href="@{/css/style.css}" rel="stylesheet">-->
+<!--  <link th:href="@{/css/menubar.css}" rel="stylesheet">-->
+<!--</head>-->
+<!--<body>-->
+<!--<header>-->
+<!--  <nav>-->
+<!--    <ul>-->
+<!--      <li><a th:href="@{/}">Temp</a></li>-->
+<!--      <li><a th:href="@{/}">Новости</a></li>-->
+<!--      <li><a th:href="@{/}">События</a></li>-->
+<!--      <li><a th:href="@{/searchuser}">Атлеты</a></li>-->
+<!--      <li><a th:href="@{/groups}">Группы</a></li>-->
+
+<!--      &lt;!&ndash; Показываем ссылку на профиль и выход, если пользователь в системе &ndash;&gt;-->
+<!--      <li th:if="${session.user}">-->
+<!--        <a th:href="@{/dashboard}" th:text="'Профиль (' + ${session.user.username} + ')'">Профиль</a>-->
+<!--      </li>-->
+<!--      <li th:if="${session.user}"><a th:href="@{/logout}">Выйти</a></li>-->
+
+<!--      &lt;!&ndash; Показываем Вход и Регистрацию, если пользователь не в системе &ndash;&gt;-->
+<!--      <li th:unless="${session.user}"><a th:href="@{/login}">Вход</a></li>-->
+<!--    </ul>-->
+<!--  </nav>-->
+<!--</header>-->
+
+<!--<div class="user-profile">-->
+<!--  <h2>Профиль пользователя</h2>-->
+<!--  <div>-->
+<!--    <p><strong>Имя пользователя:</strong> <span th:text="${user.username}">Имя пользователя</span></p>-->
+<!--    <p><strong>Имя:</strong> <span th:text="${user.name}">Имя</span></p>-->
+<!--    <p><strong>Email:</strong> <span th:text="${user.email}">Электронная почта</span></p>-->
+<!--    <p><strong>Страна:</strong> <span th:text="${user.country}">Страна</span></p>-->
+<!--    <p><strong>Город:</strong> <span th:text="${user.city}">Город</span></p>-->
+<!--  </div>-->
+
+<!--  &lt;!&ndash; Кнопки Подписаться / Отписаться &ndash;&gt;-->
+<!--  <div th:if="${session.user != null and user.id != session.user.id}">-->
+<!--    <div th:if="${!isFollowing}">-->
+<!--      <form th:action="@{/follow}" method="post">-->
+<!--        <input type="hidden" name="userId" th:value="${user.id}" />-->
+<!--        <button type="submit">Подписаться</button>-->
+<!--      </form>-->
+<!--    </div>-->
+<!--    <div th:if="${isFollowing}">-->
+<!--      <form th:action="@{/unfollow}" method="post">-->
+<!--        <input type="hidden" name="userId" th:value="${user.id}" />-->
+<!--        <button type="submit">Отписаться</button>-->
+<!--      </form>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<div>-->
+<!--  <h3>Посты пользователя</h3>-->
+<!--  <div th:if="${not #lists.isEmpty(posts)}">-->
+<!--    <div th:each="post : ${posts}">-->
+<!--      <div class="post">-->
+<!--        <p th:text="${post.content}">Содержимое поста</p>-->
+<!--        <span th:text="${#dates.format(post.createdAt, 'dd-MM-yyyy HH:mm')}">Дата создания</span>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  <div th:unless="${not #lists.isEmpty(posts)}">-->
+<!--    <p>У пользователя пока нет постов</p>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--</body>-->
+<!--</html>-->
+
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>User Profile</title>
+  <title>Профиль пользователя</title>
   <link th:href="@{/css/style.css}" rel="stylesheet">
   <link th:href="@{/css/menubar.css}" rel="stylesheet">
-
 </head>
 <body>
 <header>
@@ -18,30 +93,66 @@
       <li><a th:href="@{/groups}">Группы</a></li>
 
       <!-- Показываем ссылку на профиль и выход, если пользователь в системе -->
-      <li th:if="${username}">
-        <a th:href="@{/dashboard}" th:text="'Profile (' + ${username} + ')'">Profile</a>
+      <li th:if="${session.user}">
+        <a th:href="@{/dashboard}" th:text="'Профиль (' + ${session.user.username} + ')'">Профиль</a>
       </li>
-      <li th:if="${username}"><a th:href="@{/logout}">Выйти</a></li>
+      <li th:if="${session.user}"><a th:href="@{/logout}">Выйти</a></li>
 
       <!-- Показываем Вход и Регистрацию, если пользователь не в системе -->
-      <li th:unless="${username}"><a th:href="@{/login}">Вход</a></li>
-
-<!--      <li><button onclick="toggleDarkMode()">Dark Mode</button></li>-->
+      <li th:unless="${session.user}"><a th:href="@{/login}">Вход</a></li>
     </ul>
   </nav>
 </header>
 
 <div class="user-profile">
-  <h2>User Profile</h2>
+  <h2>Профиль пользователя</h2>
   <div>
-    <p><strong>Username:</strong> <span th:text="${user.username}">Username</span></p>
-    <p><strong>Name:</strong> <span th:text="${user.name}">Name</span></p>
-    <p><strong>Email:</strong> <span th:text="${user.email}">Email</span></p>
-    <p><strong>Country:</strong> <span th:text="${user.country}">Country</span></p>
-    <p><strong>City:</strong> <span th:text="${user.city}">City</span></p>
+    <p><strong>Имя пользователя:</strong> <span th:text="${user.username}">Имя пользователя</span></p>
+    <p><strong>Имя:</strong> <span th:text="${user.name}">Имя</span></p>
+    <p><strong>Email:</strong> <span th:text="${user.email}">Электронная почта</span></p>
+    <p><strong>Страна:</strong> <span th:text="${user.country}">Страна</span></p>
+    <p><strong>Город:</strong> <span th:text="${user.city}">Город</span></p>
+
+    <!-- Статистика подписчиков и подписок -->
+    <p>
+      <a th:href="@{'/followers/' + ${user.id}}" th:text="'Подписчики: ' + ${followersCount}">Подписчики</a>
+    </p>
+    <p>
+      <a th:href="@{'/following/' + ${user.id}}" th:text="'Подписки: ' + ${followingCount}">Подписки</a>
+    </p>
+  </div>
+
+  <!-- Кнопки Подписаться / Отписаться -->
+  <div th:if="${session.user != null and user.id != session.user.id}">
+    <div th:if="${!isFollowing}">
+      <form th:action="@{/follow}" method="post">
+        <input type="hidden" name="userId" th:value="${user.id}" />
+        <button type="submit">Подписаться</button>
+      </form>
+    </div>
+    <div th:if="${isFollowing}">
+      <form th:action="@{/unfollow}" method="post">
+        <input type="hidden" name="userId" th:value="${user.id}" />
+        <button type="submit">Отписаться</button>
+      </form>
+    </div>
   </div>
 </div>
-<script src="/js/darkmode.js"></script>
+
+<div>
+  <h3>Посты пользователя</h3>
+  <div th:if="${not #lists.isEmpty(posts)}">
+    <div th:each="post : ${posts}">
+      <div class="post">
+        <p th:text="${post.content}">Содержимое поста</p>
+        <span th:text="${#dates.format(post.createdAt, 'dd-MM-yyyy HH:mm')}">Дата создания</span>
+      </div>
+    </div>
+  </div>
+  <div th:unless="${not #lists.isEmpty(posts)}">
+    <p>У пользователя пока нет постов</p>
+  </div>
+</div>
 
 </body>
 </html>
