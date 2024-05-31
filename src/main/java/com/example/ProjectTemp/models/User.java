@@ -60,11 +60,12 @@ public class User {
     @ManyToMany
     @JoinTable(
             name = "users_followers",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "follower_id")
+            joinColumns = @JoinColumn(name = "id_user"),
+            inverseJoinColumns = @JoinColumn(name = "id_follower")
     )
     private Set<User> followers = new HashSet<>();
 
     @ManyToMany
     private Set<User> following = new HashSet<>();
+
 }

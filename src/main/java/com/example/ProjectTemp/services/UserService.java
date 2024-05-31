@@ -3,12 +3,14 @@ package com.example.ProjectTemp.services;
 import com.example.ProjectTemp.DTO.UserRegistrationDto;
 import com.example.ProjectTemp.models.ConfirmationToken;
 //import com.example.ProjectTemp.models.Role;
+import com.example.ProjectTemp.models.Group;
+import com.example.ProjectTemp.models.Post;
 import com.example.ProjectTemp.models.User;
-import com.example.ProjectTemp.repository.ConfirmationTokenRepository;
-import com.example.ProjectTemp.repository.UserRepository;
+import com.example.ProjectTemp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.ProjectTemp.security.PasswordUtil;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.HashSet;
@@ -25,10 +27,19 @@ public class UserService {
     private ConfirmationTokenRepository confirmationTokenRepository;
 
     @Autowired
+    private FollowRepository followRepository;
+
+    @Autowired
     private EmailService emailService;
 
-//    @Autowired
-//    private RoleRepository roleRepository;
+    @Autowired
+    private PostRepository postRepository;  // Добавляем репозиторий для постов
+
+    @Autowired
+    private GroupRepository groupRepository;
+
+    @Autowired
+    private GroupSubscriptionRepository groupSubscriptionRepository;
 
 
     public User save(UserRegistrationDto registrationDto) {
@@ -46,9 +57,6 @@ public class UserService {
 //        user.setPassword(registrationDto.getPassword());
         user.setPassword(PasswordUtil.hashPassword(registrationDto.getPassword())); // Хэширование пароля
 
-//        Set<Role> roles = new HashSet<>();
-//        roles.add(roleRepository.findByName("ROLE_USER"));
-//        user.setRoles(roles);
 
         User savedUser = userRepository.save(user);
 
@@ -73,6 +81,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
+
     public void confirmUser(String token) {
         ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token);
 
@@ -95,8 +104,6 @@ public class UserService {
         user.setWeight(userDto.getWeight());
         userRepository.save(user);
     }
-
-
 
     public void followUser(Long userId, Long userToFollowId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -121,5 +128,28 @@ public class UserService {
         user.getFollowing().remove(userToUnfollow);
         userRepository.save(user);
     }
+
+    @Transactional
+    public void deleteUser(User user) {
+        // Удаляем связанные посты перед удалением пользователя
+        List<Post> posts = postRepository.findByUser(user);
+        postRepository.deleteAll(posts);
+
+        // Удаляем записи из таблицы users_followers и users_following
+        followRepository.deleteByUser(user);
+        followRepository.deleteByFollower(user);
+
+        // Удаляем записи из таблицы groups
+        List<Group> groups = groupRepository.findByOwner(user);
+        groupRepository.deleteAll(groups);
+
+        // Удаляем записи из таблицы group_subscriptions
+        groupSubscriptionRepository.deleteByUser(user);
+
+        confirmationTokenRepository.deleteByUser(user);
+        userRepository.delete(user);
+    }
+
+
 
 }

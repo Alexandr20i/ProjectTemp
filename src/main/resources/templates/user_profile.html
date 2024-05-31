@@ -41,7 +41,7 @@
 <!--  &lt;!&ndash; Кнопки Подписаться / Отписаться &ndash;&gt;-->
 <!--  <div th:if="${session.user != null and user.id != session.user.id}">-->
 <!--    <div th:if="${!isFollowing}">-->
-<!--      <form th:action="@{/follow}" method="post">-->
+<!--      <form th:action="@{/followUser}" method="post">-->
 <!--        <input type="hidden" name="userId" th:value="${user.id}" />-->
 <!--        <button type="submit">Подписаться</button>-->
 <!--      </form>-->
@@ -125,7 +125,7 @@
   <!-- Кнопки Подписаться / Отписаться -->
   <div th:if="${session.user != null and user.id != session.user.id}">
     <div th:if="${!isFollowing}">
-      <form th:action="@{/follow}" method="post">
+      <form th:action="@{/followUser}" method="post">
         <input type="hidden" name="userId" th:value="${user.id}" />
         <button type="submit">Подписаться</button>
       </form>

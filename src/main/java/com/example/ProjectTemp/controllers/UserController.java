@@ -6,7 +6,6 @@ import com.example.ProjectTemp.models.User;
 import com.example.ProjectTemp.services.FollowService;
 import com.example.ProjectTemp.services.PostService;
 import com.example.ProjectTemp.services.UserService;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -76,31 +75,44 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registerUserAccount(@ModelAttribute("user") UserRegistrationDto registrationDto) {
+    public String registerUserAccount(@ModelAttribute("user") UserRegistrationDto registrationDto,
+                                      Model model,
+                                      HttpSession session) {
         User existing = userService.findByUsername(registrationDto.getUsername());
         if (existing != null) {
             return "redirect:/register?error";
         }
 
         userService.save(registrationDto);
-        return "redirect:/register?success";
+        session.setAttribute("accountConfirmed", true);
+
+        return "redirect:/login";
     }
 
+    /** Метод для получения формы редактирования профиля */
     @GetMapping("/edit-profile")
     public String showEditProfileForm(HttpSession session, Model model) {
         User sessionUser = (User) session.getAttribute("user");
         if (sessionUser == null) {
             return "redirect:/login";
         }
+        if (!sessionUser.isActive()) {
+            model.addAttribute("error", "Аккаун не подтверждён! Вам на почту пришло письмо, перейдите по ссылке");
+            return "error_active";  // Страница ошибки, если аккаунт не активен
+        }
         model.addAttribute("user", sessionUser);
         return "edit-profile";
     }
 
+    /** Метод для обработки данных формы редактирования профиля */
     @PostMapping("/edit-profile")
     public String updateUserProfile(@ModelAttribute("user") UserRegistrationDto userDto, HttpSession session) {
         User sessionUser = (User) session.getAttribute("user");
         if (sessionUser == null) {
             return "redirect:/login";
+        }
+        if (!sessionUser.isActive()) {
+            return "redirect:/edit-profile?error=notactive";  // Редирект с ошибкой, если аккаунт не активен
         }
 
         userService.updateUserProfile(sessionUser.getId(), userDto);
@@ -109,6 +121,10 @@ public class UserController {
         return "redirect:/dashboard";
     }
 
+
+
+
+
     @GetMapping("/dashboard/create-post")
     public String getUserPosts(Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -116,7 +132,6 @@ public class UserController {
             model.addAttribute("error", "Пользователь не найден");
             return "error";
         }
-
         model.addAttribute("posts", new Post());
         return "create-post";
     }
@@ -132,56 +147,14 @@ public class UserController {
         }
         post.setUser(user);
         post.setCreatedAt(new Date());
-        postService.savePost(post.getContent(), user); // Передаём уже собранный объект post
+        postService.saveUserPost(post.getContent(), user); // Передаём уже собранный объект post
         return "redirect:/dashboard";
 
     }
 
-//    @GetMapping("/users/{userId}/follow")
-//    public String followUser(@PathVariable Long userId, HttpSession session, ServletResponse response) {
-//        User sessionUser = (User) session.getAttribute("user");
-//        if (sessionUser == null) {
-//            return "redirect:/login";
-//        }
-//
-//        userService.followUser(sessionUser.getId(), userId);
-//        return "redirect:/showusers?username=" + sessionUser.getUsername();  // Redirect to user profile or required page
-//    }
-//
-//    @GetMapping("/users/{userId}/unfollow")
-//    public String unfollowUser(@PathVariable Long userId, HttpSession session, ServletResponse response) {
-//        User sessionUser = (User) session.getAttribute("user");
-//        if (sessionUser == null) {
-//            return "redirect:/login";
-//        }
-//
-//        userService.unfollowUser(sessionUser.getId(), userId);
-//        return "redirect:/showusers?username=" + sessionUser.getUsername();  // Redirect to user profile or required page
-//    }
-//
-//    @GetMapping("/users/{userId}/followers")
-//    public String showFollowers(@PathVariable Long userId, Model model, HttpSession session) {
-//        Set<User> followers = userService.getFollowers(userId);
-//        model.addAttribute("users", followers);
-//        return "users_list";  // Display list of followers
-//    }
-//
-//    @GetMapping("/users/{userId}/following")
-//    public String showFollowing(@PathVariable Long userId, Model model, HttpSession session) {
-//        Set<User> following = userService.getFollowing(userId);
-//        model.addAttribute("users", following);
-//        return "users_list";  // Display list of following users
-//    }
-
-
-
-
-
-
-
 
     // Подписка на пользователя
-    @PostMapping("/follow")
+    @PostMapping("/followUser")
     public String followUser(@RequestParam Long userId, HttpSession session) {
         User sessionUser = (User) session.getAttribute("user");
         if (sessionUser == null) {
@@ -243,7 +216,7 @@ public class UserController {
         return "following";
     }
 
-    // Получить подписчиков
+    /** Получить подписчиков */
     @GetMapping("/followers")
     public String getFollowers(Model model, HttpSession session) {
         User sessionUser = (User) session.getAttribute("user");
@@ -256,7 +229,7 @@ public class UserController {
         return "followers";
     }
 
-    // Получить подписки
+    /** Получить подписки */
     @GetMapping("/following")
     public String getFollowing(Model model, HttpSession session) {
         User sessionUser = (User) session.getAttribute("user");
@@ -267,6 +240,19 @@ public class UserController {
         List<User> following = followService.getFollowingUsers(sessionUser);
         model.addAttribute("following", following);
         return "following";
+    }
+
+    @PostMapping("/delete-account")
+    public String deleteUserAccount(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            userService.deleteUser(user);
+            session.invalidate();
+            //System.out.println("User account deleted: " + user.getUsername());
+        } else {
+            System.out.println("No user in session");
+        }
+        return "redirect:/";
     }
 
 }

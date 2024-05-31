@@ -1,0 +1,94 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--  <title>Group Page</title>-->
+<!--  <link rel="stylesheet" href="styles.css">-->
+<!--</head>-->
+<!--<body>-->
+<!--<header>-->
+<!--  <h1>Group: {{group.name}}</h1>-->
+<!--</header>-->
+<!--<main>-->
+<!--  <section>-->
+<!--    <h2>Group Information</h2>-->
+<!--    <p>Owner: {{group.owner.name}}</p>-->
+<!--    &lt;!&ndash; Отображаем только для владельца группы &ndash;&gt;-->
+<!--    <div id="group-edit-form" style="display: none;">-->
+<!--      <h3>Edit Group</h3>-->
+<!--      <form action="/groups/{{group.id}}/update-name" method="post">-->
+<!--        <input type="text" name="newName" placeholder="New Group Name" required>-->
+<!--        <input type="hidden" name="ownerId" value="{{user.id}}">-->
+<!--        <button type="submit">Update Name</button>-->
+<!--      </form>-->
+<!--    </div>-->
+<!--  </section>-->
+<!--  <section>-->
+<!--    <h2>Members</h2>-->
+<!--    <ul>-->
+<!--      {{#each group.members}}-->
+<!--      <li>{{this.name}}</li>-->
+<!--      {{/each}}-->
+<!--    </ul>-->
+<!--  </section>-->
+<!--  <section>-->
+<!--    <h2>Moderators</h2>-->
+<!--    <ul>-->
+<!--      {{#each group.moderators}}-->
+<!--      <li>{{this.name}}</li>-->
+<!--      {{/each}}-->
+<!--    </ul>-->
+<!--    &lt;!&ndash; Форма для назначения модератора (отображается только владельцу группы) &ndash;&gt;-->
+<!--    <div id="moderator-form" style="display: none;">-->
+<!--      <h3>Promote to Moderator</h3>-->
+<!--      <form action="/groups/{{group.id}}/promote" method="post">-->
+<!--        <select name="userId" required>-->
+<!--          {{#each group.members}}-->
+<!--          <option value="{{this.id}}">{{this.name}}</option>-->
+<!--          {{/each}}-->
+<!--        </select>-->
+<!--        <button type="submit">Promote</button>-->
+<!--      </form>-->
+<!--    </div>-->
+<!--  </section>-->
+<!--  <section>-->
+<!--    <h2>Posts</h2>-->
+<!--    <ul>-->
+<!--      {{#each group.posts}}-->
+<!--      <li>{{this.user.name}}: {{this.content}}</li>-->
+<!--      {{/each}}-->
+<!--    </ul>-->
+<!--  </section>-->
+<!--  <section>-->
+<!--    <h2>Create a Post</h2>-->
+<!--    <form action="/posts/create-for-group" method="post">-->
+<!--      <textarea name="content" placeholder="Write your post here..." required></textarea>-->
+<!--      <input type="hidden" name="groupId" value="{{group.id}}">-->
+<!--      <input type="hidden" name="userId" value="{{user.id}}">-->
+<!--      <button type="submit">Create Post</button>-->
+<!--    </form>-->
+<!--  </section>-->
+<!--  <section>-->
+<!--    <h2>Subscribe to Group</h2>-->
+<!--    <form action="/groups/{{group.id}}/subscribe" method="post">-->
+<!--      <input type="hidden" name="userId" value="{{user.id}}">-->
+<!--      <button type="submit">Subscribe</button>-->
+<!--    </form>-->
+<!--    <form action="/groups/{{group.id}}/unsubscribe" method="post">-->
+<!--      <input type="hidden" name="userId" value="{{user.id}}">-->
+<!--      <button type="submit">Unsubscribe</button>-->
+<!--    </form>-->
+<!--  </section>-->
+<!--</main>-->
+<!--<script>-->
+<!--  // Показываем/скрываем формы для владельца группы-->
+<!--  const currentUserId = {{user.id}};-->
+<!--  const groupOwnerId = {{group.owner.id}};-->
+<!--  if (currentUserId === groupOwnerId) {-->
+<!--    document.getElementById('group-edit-form').style.display = 'block';-->
+<!--    document.getElementById('moderator-form').style.display = 'block';-->
+<!--  }-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->

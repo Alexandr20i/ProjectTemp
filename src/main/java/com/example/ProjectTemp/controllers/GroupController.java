@@ -1,6 +1,7 @@
 package com.example.ProjectTemp.controllers;
 
 import com.example.ProjectTemp.models.Group;
+import com.example.ProjectTemp.models.Post;
 import com.example.ProjectTemp.models.User;
 import com.example.ProjectTemp.services.GroupService;
 import com.example.ProjectTemp.services.PostService;
@@ -22,26 +23,38 @@ public class GroupController {
     @Autowired
     private PostService postService;
 
-    @PostMapping("/{id}/posts")
-    public String createGroupPost(@PathVariable Long id, @RequestParam String content, HttpSession session, Model model) {
+    /** Метод для отображения формы создания поста в группе */
+    @GetMapping("/{id}/create-post")
+    public String getCreateGroupPostForm(@PathVariable Long id,
+                                         HttpSession session,
+                                         Model model) {
         Group group = groupService.getGroupById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Неверный ID группы: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + id));
+        model.addAttribute("group", group);
+        model.addAttribute("post", new Post());
+
+        if (session.getAttribute("user") != null) {
+            model.addAttribute("username", ((User) session.getAttribute("user")).getUsername());
+        }
+        return "groups/create-post"; // путь к шаблону для создания поста в группе
+    }
+
+    /** Метод для обработки создания поста в группе */
+    @PostMapping("/{id}/create-post")
+    public String createGroupPost(@PathVariable Long id,
+                                  @ModelAttribute("post") Post post,
+                                  HttpSession session) {
         User user = (User) session.getAttribute("user");
+        Group group = groupService.getGroupById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + id));
 
         if (user == null) {
             return "redirect:/login";
         }
 
-        // Проверяем, является ли пользователь владельцем группы
-        if (!group.getOwner().getId().equals(user.getId())) {
-            model.addAttribute("error", "Только создатель группы может публиковать посты.");
-            return "groups/details";
-        }
-
-        postService.createPostForGroup(content, group);
+        postService.saveGroupPost(post.getContent(), user, group);
         return "redirect:/groups/" + id;
     }
-
 
 
 
@@ -64,18 +77,6 @@ public class GroupController {
         return "groups/list"; // Path to the Thymeleaf template for listing groups
     }
 
-    @GetMapping("/{id}")
-    public String groupDetails(@PathVariable Long id,
-                               HttpSession session,
-                               Model model) {
-        Group group = groupService.getGroupById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Неверный Id группы:" + id));
-        model.addAttribute("group", group);
-        if (session.getAttribute("user") != null) {
-            model.addAttribute("username", ((User) session.getAttribute("user")).getUsername());
-        }
-        return "groups/details"; // Path to the Thymeleaf template for group details
-    }
 
     @GetMapping("/new")
     public String newGroupForm(HttpSession session,
@@ -101,6 +102,91 @@ public class GroupController {
 //        System.out.println("Owner: " + owner.getName());
 
         groupService.createGroup(name, owner);
+        return "redirect:/groups";
+    }
+
+    @PostMapping("/{id}/toggle-subscription")
+    public String toggleSubscription(@PathVariable Long id, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        Group group = groupService.getGroupById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + id));
+
+        if (groupService.isUserSubscribed(user, group)) {
+            groupService.unsubscribeFromGroup(user, group);
+        } else {
+            groupService.subscribeToGroup(user, group);
+        }
+
+        return "redirect:/groups/" + id;
+    }
+
+    @GetMapping("/{id}")
+    public String groupDetails(@PathVariable Long id,
+                               HttpSession session,
+                               Model model) {
+        Group group = groupService.getGroupById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + id));
+        model.addAttribute("group", group);
+
+        List<Post> posts = postService.findPostsByGroup(group);
+        model.addAttribute("posts", posts);
+
+        if (session.getAttribute("user") != null) {
+            User user = (User) session.getAttribute("user");
+            model.addAttribute("username", user.getUsername());
+            model.addAttribute("isSubscribed", groupService.isUserSubscribed(user, group));
+        }
+        return "groups/details"; // Path to the Thymeleaf template for group details
+    }
+
+    @GetMapping("/{id}/subscribers")
+    public String groupSubscribers(@PathVariable Long id, Model model) {
+        Group group = groupService.getGroupById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + id));
+        model.addAttribute("group", group);
+        model.addAttribute("subscribers", group.getSubscribers());
+        return "groups/subscribers"; // Path to the Thymeleaf template for subscribers list
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editGroupForm(@PathVariable Long id, HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        Group group = groupService.getGroupById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + id));
+        if (user == null || !group.getOwner().getId().equals(user.getId())) {
+            return "redirect:/groups/" + id;
+        }
+        model.addAttribute("group", group);
+        return "groups/edit-group"; // Path to the Thymeleaf template for editing group
+    }
+
+    @PostMapping("/{id}/edit")
+    public String updateGroup(@PathVariable Long id,
+                              @RequestParam String name,
+                              @RequestParam String description,
+                              HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        Group group = groupService.getGroupById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + id));
+        if (user == null || !group.getOwner().getId().equals(user.getId())) {
+            return "redirect:/groups/" + id;
+        }
+        groupService.updateGroupDetails(group, name, description);
+        return "redirect:/groups/" + id;
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteGroup(@PathVariable Long id, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        Group group = groupService.getGroupById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + id));
+        if (user == null || !group.getOwner().getId().equals(user.getId())) {
+            return "redirect:/groups/" + id;
+        }
+        groupService.deleteGroup(group);
         return "redirect:/groups";
     }
 }
