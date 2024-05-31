@@ -25,31 +25,69 @@
     <!-- Показываем Вход и Регистрацию, если пользователь не в системе -->
     <li th:unless="${username}"><a th:href="@{/login}">Вход</a></li>
 
-<!--    <li><button onclick="toggleDarkMode()">Dark Mode</button></li>-->
+    <!--    <li><button onclick="toggleDarkMode()">Dark Mode</button></li>-->
   </ul>
 </nav>
+
+
 <h1>Детали группы</h1>
 <div>
   <h2 th:text="${group.name}">Название группы</h2>
+  <h4>Описание:<span th:text="${group.description}">Текст описания</span></h4>
   <h3>Владелец: <span th:text="${group.owner.name}">Имя владельца</span></h3>
 </div>
 
-
-<h1>Группа: <span th:text="${group.name}">Название группы</span></h1>
 <div>
-  <h2>Создать пост</h2>
-  <form th:action="@{/groups/{id}/posts(id=${group.id})}" method="post">
-    <textarea name="content" placeholder="Напишите что-нибудь..."></textarea>
-    <button type="submit">Опубликовать</button>
-  </form>
+  <h3>Subscribers: <span th:text="${group.subscribers.size()}"></span></h3>
+  <a th:href="@{'/groups/' + ${group.id} + '/subscribers'}">View All Subscribers</a>
 </div>
+
+<!-- Кнопка подписки/отписки -->
+<form th:action="@{'/groups/' + ${group.id} + '/toggle-subscription'}" method="post">
+  <button type="submit" th:text="${isSubscribed} ? 'Unsubscribe' : 'Subscribe'"></button>
+</form>
+
+<!-- Кнопка редактирования группы, видимая только владельцу -->
+<div th:if="${username == group.owner.username}">
+  <a th:href="@{'/groups/' + ${group.id} + '/edit'}">Редактировать группу</a>
+</div>
+
+
+<!-- Кнопка создания поста в группе -->
+<div th:if="${username}">
+  <a th:href="@{'/groups/' + ${group.id} + '/create-post'}">Создать пост</a>
+</div>
+
+<!-- Список постов в группе -->
 <div>
-  <h2>Посты</h2>
+  <h3>Посты в группе</h3>
   <div th:each="post : ${posts}">
-    <p th:text="${post.content}">Содержимое поста</p>
-    <p><b>Автор:</b> <span th:text="${post.user.username}">Имя пользователя</span> в <span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">Дата</span></p>
+    <div>
+      <h4 th:text="${post.user.name}">Имя автора поста</h4>
+      <p th:text="${post.content}">Содержимое поста</p>
+      <p><small th:text="${post.createdAt}">Дата создания</small></p>
+    </div>
+    <hr/>
   </div>
 </div>
+
+
+<!--<div>-->
+<!--  <h2>Создать пост</h2>-->
+<!--  <form th:action="@{/groups/{id}/posts(id=${group.id})}" method="post">-->
+<!--    <textarea name="content" placeholder="Напишите что-нибудь..."></textarea>-->
+<!--    <button type="submit">Опубликовать</button>-->
+<!--  </form>-->
+<!--</div>-->
+
+
+<!--<div>-->
+<!--  <h2>Посты</h2>-->
+<!--  <div th:each="post : ${posts}">-->
+<!--    <p th:text="${post.content}">Содержимое поста</p>-->
+<!--    <p><b>Автор:</b> <span th:text="${post.user.username}">Имя пользователя</span> в <span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">Дата</span></p>-->
+<!--  </div>-->
+<!--</div>-->
 
 
 

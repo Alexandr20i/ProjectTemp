@@ -5,6 +5,14 @@
   <title>Вход</title>
   <link th:href="@{/css/style.css}" rel="stylesheet">
   <link th:href="@{/css/menubar.css}" rel="stylesheet">
+  <script>
+    window.onload = function() {
+      if (sessionStorage.getItem('accountConfirmed') === 'true') {
+        alert('Регистрация прошла успешно, осталось подтвердить аккаунт, перейдя по ссылке на почте');
+        sessionStorage.removeItem('accountConfirmed');
+      }
+    };
+  </script>
 
 </head>
 <body>

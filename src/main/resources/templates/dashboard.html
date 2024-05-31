@@ -33,10 +33,40 @@
 
 </header>
 <h1>Личный кабинет</h1>
+
+<!--<div>-->
+<!--  <h3>Подписки</h3>-->
+<!--  <ul>-->
+<!--    <li th:each="followedUser : ${following}">-->
+<!--      <a th:href="@{'/user/' + ${followedUser.id}}" th:text="${followedUser.name}">Имя пользователя</a>-->
+<!--    </li>-->
+<!--  </ul>-->
+<!--</div>-->
+
+<!--<div>-->
+<!--  <h3>Подписчики</h3>-->
+<!--  <ul>-->
+<!--    <li th:each="follower : ${followers}">-->
+<!--      <a th:href="@{'/user/' + ${follower.id}}" th:text="${follower.name}">Имя пользователя</a>-->
+<!--    </li>-->
+<!--  </ul>-->
+<!--</div>-->
+
 <div>
   <h3>Информация о пользователе</h3>
   <p><strong>Имя:</strong> <span th:text="${user.name}"></span></p>
   <p><strong>Фамилия:</strong> <span th:text="${user.fnameUser}"></span></p>
+
+<!--  <p>-->
+<!--    <a th:href="@{'/followers/' + ${user.id}}" th:text="'Подписчики: ' + ${followersCount}">Подписчики</a>-->
+<!--  </p>-->
+<!--  <p>-->
+<!--    <a th:href="@{'/following/' + ${user.id}}" th:text="'Подписки: ' + ${followingCount}">Подписки</a>-->
+<!--  </p>-->
+
+
+
+
   <p><strong>Дата рождения:</strong> <span th:text="${#dates.format(user.bday, 'dd-MM-yyyy')}"></span></p>
   <p><strong>Пол:</strong> <span th:text="${user.gender}"></span></p>
   <p><strong>Страна:</strong> <span th:text="${user.country}"></span></p>
@@ -63,20 +93,5 @@
     <span th:text="${#dates.format(post.createdAt, 'dd MMMM yyyy HH:mm')}">Дата</span>
   </div>
 </div>
-
-<!--  <div>-->
-<!--    <h3>Создать новый пост</h3>-->
-<!--    <form th:action="@{/dashboard/create-post}" method="post">-->
-<!--      <textarea name="content" placeholder="О чем вы думаете?"></textarea>-->
-<!--      <button type="submit">Опубликовать</button>-->
-<!--    </form>-->
-<!--  </div>-->
-<!--</div>-->
-
-</body>
-</html>
-
-
-
 </body>
 </html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Subscribers List</title>
+</head>
+<body>
+<!--<h1>Subscribers of Group: <span th:text="${group.name}"></span></h1>-->
+
+<!--<ul>-->
+<!--  <li th:each="subscriber : ${subscribers}" th:text="${subscriber.name}"></li>-->
+<!--</ul>-->
+<!--<a th:href="@{'/groups/' + ${group.id}}">Back to Group</a>-->
+
+<!--<li th:each="user : ${user}">-->
+<!--  <a th:href="@{'/showusers?username=' + ${user.username}}" th:text="${user.username}"> Имя пользователя</a>-->
+<!--</li>-->
+
+<h1>Subscribers of Group: <span th:text="${group.name}"></span></h1>
+<ul>
+  <li th:each="subscriber : ${subscribers}">
+    <a th:href="@{'/showusers?username=' + ${subscriber.username}}" th:text="${subscriber.username}"></a>
+  </li>
+</ul>
+<a th:href="@{'/groups/' + ${group.id}}">Back to Group</a>
+
+</body>
+</html>

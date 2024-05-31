@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Создать пост в группе</title>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/menubar.css}" rel="stylesheet">
+</head>
+<body>
+<nav>
+  <ul>
+    <li><a th:href="@{/}">Temp</a></li>
+    <li><a th:href="@{/}">Новости</a></li>
+    <li><a th:href="@{/}">События</a></li>
+    <li><a th:href="@{/searchuser}">Атлеты</a></li>
+    <li><a th:href="@{/groups}">Группы</a></li>
+    <li th:if="${username}">
+      <a th:href="@{/dashboard}" th:text="'Profile (' + ${username} + ')'">Profile</a>
+    </li>
+    <li th:if="${username}"><a th:href="@{/logout}">Выйти</a></li>
+    <li th:unless="${username}"><a th:href="@{/login}">Вход</a></li>
+  </ul>
+</nav>
+
+<h1>Создать пост в группе: <span th:text="${group.name}"></span></h1>
+<form th:action="@{'/groups/' + ${group.id} + '/create-post'}" th:object="${post}" method="post">
+  <div>
+    <label for="content">Содержимое:</label>
+    <textarea id="content" th:field="*{content}" rows="5" cols="50"></textarea>
+  </div>
+  <div>
+    <button type="submit">Опубликовать</button>
+  </div>
+</form>
+
+</body>
+</html>

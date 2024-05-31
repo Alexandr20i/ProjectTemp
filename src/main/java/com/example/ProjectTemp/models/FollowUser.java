@@ -8,17 +8,17 @@ import lombok.Setter;
 @Setter
 @Getter
 @Table(name = "users_followers")
-public class Follow {
+public class FollowUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id_user")
+    @JoinColumn(name = "id_user", referencedColumnName = "id_user")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "follower_id", referencedColumnName = "id_user")
+    @JoinColumn(name = "id_follower", referencedColumnName = "id_user")
     private User follower;
 
 }
